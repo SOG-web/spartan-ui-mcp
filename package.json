@@ -1,0 +1,47 @@
+{
+  "name": "spartan-ui-mcp",
+  "version": "1.0.0",
+  "description": "MCP server exposing Spartan Angular UI documentation and component tools.",
+  "main": "server.js",
+  "type": "module",
+  "bin": {
+    "spartan-ui-mcp": "./server.js"
+  },
+  "files": [
+    "server.js",
+    "tools/"
+  ],
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js",
+    "test": "echo \"No tests configured\" && exit 0",
+    "prepublish": "echo 'Ready to publish spartan-ui-mcp'"
+  },
+  "keywords": [
+    "mcp",
+    "model-context-protocol",
+    "spartan",
+    "angular",
+    "ui",
+    "spartan-ui",
+    "components",
+    "documentation"
+  ],
+  "author": "Your Name <your.email@example.com>",
+  "license": "ISC",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yourusername/spartan-ui-mcp.git"
+  },
+  "bugs": {
+    "url": "https://github.com/yourusername/spartan-ui-mcp/issues"
+  },
+  "homepage": "https://github.com/yourusername/spartan-ui-mcp#readme",
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.17.2",
+    "zod": "^3.23.8"
+  }
+}
