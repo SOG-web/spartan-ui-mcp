@@ -72,19 +72,48 @@ The server provides comprehensive access to:
 
 ## 🛠 Usage
 
-### MCP Client Configuration
+### Quick Start (No Installation Required!)
 
-Configure your MCP client (Claude Desktop, Cursor, etc.) to connect to this server:
+Configure your MCP client (Claude Desktop, Cursor, etc.):
 
 ```json
 {
   "mcpServers": {
     "spartan-ui-mcp": {
-      "command": "node",
-      "args": ["/path/to/spartan-ui-mcp/server.js"]
+      "command": "npx",
+      "args": ["spartan-ui-mcp"]
     }
   }
 }
+```
+
+**That's it!** The server will automatically download and run when needed.
+
+### Alternative Installation Methods
+
+**Global Installation:**
+
+```bash
+npm install -g spartan-ui-mcp
+```
+
+```json
+{
+  "mcpServers": {
+    "spartan-ui-mcp": {
+      "command": "spartan-ui-mcp"
+    }
+  }
+}
+```
+
+**Development Setup:**
+
+```bash
+git clone https://github.com/SOG-web/spartan-ui-mcp.git
+cd spartan-ui-mcp
+npm install
+npm start
 ```
 
 ### Example Tool Calls

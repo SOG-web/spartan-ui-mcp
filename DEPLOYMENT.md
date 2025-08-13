@@ -21,19 +21,32 @@ npm login
 npm publish
 ```
 
-### 3. **Users Install via NPM**
+### 3. **Users Don't Need to Install** (npx approach)
 
-```bash
-# Global installation
-npm install -g spartan-ui-mcp
-
-# Local installation
-npm install spartan-ui-mcp
-```
+No installation required! Users can run directly with `npx`.
 
 ### 4. **MCP Client Configuration**
 
 Users configure their MCP clients (Claude Desktop, Cursor, etc.):
+
+**Option 1: Using npx (Recommended)**
+
+```json
+{
+  "mcpServers": {
+    "spartan-ui-mcp": {
+      "command": "npx",
+      "args": ["spartan-ui-mcp"]
+    }
+  }
+}
+```
+
+**Option 2: Global installation**
+
+```bash
+npm install -g spartan-ui-mcp
+```
 
 ```json
 {
@@ -45,7 +58,11 @@ Users configure their MCP clients (Claude Desktop, Cursor, etc.):
 }
 ```
 
-Or for local installation:
+**Option 3: Local installation**
+
+```bash
+npm install spartan-ui-mcp
+```
 
 ```json
 {
@@ -103,8 +120,8 @@ docker run --rm spartan-ui-mcp
 
 ```bash
 # Tag and push to Docker Hub
-docker tag spartan-ui-mcp yourusername/spartan-ui-mcp:latest
-docker push yourusername/spartan-ui-mcp:latest
+docker tag spartan-ui-mcp sog-web/spartan-ui-mcp:latest
+docker push sog-web/spartan-ui-mcp:latest
 ```
 
 Users can then run:
@@ -114,7 +131,7 @@ Users can then run:
   "mcpServers": {
     "spartan-ui-mcp": {
       "command": "docker",
-      "args": ["run", "--rm", "yourusername/spartan-ui-mcp:latest"]
+      "args": ["run", "--rm", "sog-web/spartan-ui-mcp:latest"]
     }
   }
 }
@@ -204,27 +221,29 @@ jobs:
 
 **For maximum accessibility:**
 
-1. **Publish to NPM** - Easiest for users to install and use
+1. **Publish to NPM** - Users can run with `npx` (no installation needed)
 2. **Create GitHub repository** - For source code and issues
 3. **Add to MCP registry** - If available, for discoverability
 
-**Installation becomes:**
-
-```bash
-npm install -g spartan-ui-mcp
-```
-
-**Usage in MCP client:**
+**No installation required! Users just configure:**
 
 ```json
 {
   "mcpServers": {
     "spartan-ui-mcp": {
-      "command": "spartan-ui-mcp"
+      "command": "npx",
+      "args": ["spartan-ui-mcp"]
     }
   }
 }
 ```
+
+**Benefits of npx approach:**
+
+- ✅ No global installation required
+- ✅ Always runs latest version
+- ✅ No version management needed
+- ✅ Cleaner user experience
 
 ## 🔄 Updates and Versioning
 

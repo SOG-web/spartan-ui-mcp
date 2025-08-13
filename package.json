@@ -27,16 +27,16 @@
     "components",
     "documentation"
   ],
-  "author": "Your Name <your.email@example.com>",
-  "license": "ISC",
+  "author": "Olaleka Raheem <raheemolalekausman84@gmail.com>",
+  "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/yourusername/spartan-ui-mcp.git"
+    "url": "https://github.com/SOG-web/spartan-ui-mcp.git"
   },
   "bugs": {
-    "url": "https://github.com/yourusername/spartan-ui-mcp/issues"
+    "url": "https://github.com/SOG-web/spartan-ui-mcp/issues"
   },
-  "homepage": "https://github.com/yourusername/spartan-ui-mcp#readme",
+  "homepage": "https://github.com/SOG-web/spartan-ui-mcp#readme",
   "engines": {
     "node": ">=18.0.0"
   },
