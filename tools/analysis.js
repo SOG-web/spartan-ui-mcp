@@ -68,6 +68,8 @@ export function registerAnalysisTools(server) {
   );
 
   // Find related/similar components
+  // COMMENTED OUT: Not producing useful results
+  /*
   server.registerTool(
     "spartan_components_related",
     {
@@ -128,8 +130,11 @@ export function registerAnalysisTools(server) {
       };
     }
   );
+  */
 
   // List component variants (Brain vs Helm API)
+  // COMMENTED OUT: Not producing useful results
+  /*
   server.registerTool(
     "spartan_components_variants",
     {
@@ -180,6 +185,7 @@ export function registerAnalysisTools(server) {
       };
     }
   );
+  */
 
   // Accessibility check
   server.registerTool(

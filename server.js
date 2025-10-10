@@ -26,8 +26,8 @@ registerComponentTools(server);
 registerDocsTools(server);
 registerHealthTools(server);
 registerMetaTools(server);
-registerGenerationTools(server);
-registerSearchTools(server);
+// registerGenerationTools(server); // Commented out: boilerplate generator needs manual implementation
+// registerSearchTools(server); // Commented out: full-text search returns bloated responses
 registerAnalysisTools(server);
 registerCacheTools(server);
 
