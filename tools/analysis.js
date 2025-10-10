@@ -11,7 +11,7 @@ import {
 export function registerAnalysisTools(server) {
   // Show component dependencies
   server.registerTool(
-    "spartan.components.dependencies",
+    "spartan_components_dependencies",
     {
       title: "Show component dependencies",
       description:
@@ -69,7 +69,7 @@ export function registerAnalysisTools(server) {
 
   // Find related/similar components
   server.registerTool(
-    "spartan.components.related",
+    "spartan_components_related",
     {
       title: "Find related or similar components",
       description:
@@ -131,7 +131,7 @@ export function registerAnalysisTools(server) {
 
   // List component variants (Brain vs Helm API)
   server.registerTool(
-    "spartan.components.variants",
+    "spartan_components_variants",
     {
       title: "List component variants (Brain vs Helm API)",
       description:
@@ -183,7 +183,7 @@ export function registerAnalysisTools(server) {
 
   // Accessibility check
   server.registerTool(
-    "spartan.accessibility.check",
+    "spartan_accessibility_check",
     {
       title: "Check component accessibility features",
       description:

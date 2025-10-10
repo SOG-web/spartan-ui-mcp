@@ -7,10 +7,11 @@ import {
   extractHeadings,
   extractLinks,
 } from "./utils.js";
+import { cacheManager } from "./cache.js";
 
 export function registerDocsTools(server) {
   server.registerTool(
-    "spartan.docs.get",
+    "spartan_docs_get",
     {
       title: "Get a Spartan docs section",
       description:
@@ -38,21 +39,58 @@ export function registerDocsTools(server) {
           .default("none")
           .describe("Optional extraction: code blocks, headings, or links."),
         noCache: z.boolean().default(false).describe("Bypass cache when true."),
+        spartanVersion: z
+          .string()
+          .optional()
+          .describe(
+            "Spartan UI version to use for caching (e.g., '1.2.3'). If not provided, defaults to 'latest'."
+          ),
       },
     },
-    async (args) => {
-      const topic = /** @type {string} */ (args.topic);
+    async (
+      /** @type {{ topic: string; format?: string; extract?: string; noCache?: boolean; spartanVersion?: string; }} */ args
+    ) => {
+      const topic = args.topic;
       const format = args.format === "text" ? "text" : "html";
       const extract = args.extract || "none";
       const noCache = Boolean(args.noCache);
+
+      // Initialize cache with version (defaults to "latest")
+      await cacheManager.initialize(args.spartanVersion);
+
       const url =
         topic === "analog-dark-mode"
           ? "https://dev.to/this-is-angular/dark-mode-with-analog-tailwind-4049"
           : `${SPARTAN_DOCS_BASE}/${encodeURIComponent(topic)}`;
-      const content = await fetchContent(url, format, noCache);
+
+      let content;
+      let cacheInfo = "";
+
+      // Try cache first if not bypassed (skip cache for external analog-dark-mode)
+      if (!noCache && topic !== "analog-dark-mode") {
+        const cached = await cacheManager.getDocs(topic);
+        if (cached.cached && !cached.stale) {
+          content = cached.data;
+          cacheInfo = `\n[📦 CACHED DATA - Version: ${cached.version}, Cached at: ${cached.cachedAt}]`;
+        } else if (cached.cached && cached.stale) {
+          content = await fetchContent(url, format, true);
+          await cacheManager.setDocs(topic, /** @type {string} */ (content));
+          cacheInfo = `\n[🔄 CACHE REFRESHED - Version: ${cacheManager.currentVersion}]`;
+        } else {
+          content = await fetchContent(url, format, true);
+          await cacheManager.setDocs(topic, /** @type {string} */ (content));
+          cacheInfo = `\n[✨ NEWLY CACHED - Version: ${cacheManager.currentVersion}]`;
+        }
+      } else {
+        content = await fetchContent(url, format, noCache);
+        cacheInfo = noCache ? "\n[🌐 LIVE FETCH - Cache bypassed]" : "";
+      }
+
       if (extract === "none" || format === "text") {
         return {
-          content: [{ type: "text", text: `${content}\n\nSource: ${url}` }],
+          content: [
+            { type: "text", text: `${content}${cacheInfo}\n\nSource: ${url}` },
+          ],
         };
       }
       const html = /** @type {string} */ (

@@ -1,5 +1,4 @@
 //@ts-check
-
 // Base URLs for Spartan UI docs
 export const SPARTAN_DOCS_BASE = "https://www.spartan.ng/documentation";
 export const SPARTAN_COMPONENTS_BASE = "https://www.spartan.ng/components";
@@ -118,16 +117,33 @@ export async function fetchContent(url, format = "html", noCache = false) {
 
 /**
  * Extract code blocks from HTML and return as an array of strings.
+ * Filters out single-line snippets and very short code blocks.
  * @param {string} html
  */
 export function extractCodeBlocks(html) {
   const blocks = [];
   const preCodeRegex = /<pre[^>]*><code[^>]*>[\s\S]*?<\/code><\/pre>/gi;
   const codeRegex = /<code[^>]*>[\s\S]*?<\/code>/gi;
+
   const pushMatchText = (s) => {
     const inner = s.replace(/^<[^>]+>/, "").replace(/<[^>]+>$/, "");
-    blocks.push(htmlToText(inner));
+    const code = htmlToText(inner);
+
+    // Filter out short, insignificant code snippets
+    const lines = code.split("\n").filter((line) => line.trim().length > 0);
+
+    // Skip single-line imports
+    if (lines.length === 1 && code.includes("import")) {
+      return;
+    }
+
+    // Only include code blocks that have more than 2 lines of actual code
+    // This filters out selectors, single imports, and other tiny snippets
+    if (lines.length > 2) {
+      blocks.push(code);
+    }
   };
+
   let match;
   while ((match = preCodeRegex.exec(html)) !== null) pushMatchText(match[0]);
   while ((match = codeRegex.exec(html)) !== null) pushMatchText(match[0]);
@@ -173,40 +189,42 @@ export function extractAPIInfo(html) {
       /** @type {Array<{name: string, selector: string, inputs: Array<{prop: string, type: string, default: string, description: string}>, outputs: Array<{prop: string, type: string, description: string}>}>} */ ([]),
     examples:
       /** @type {Array<{title: string, code: string, language: string}>} */ ([]),
-    usage:
-      /** @type {Array<{component: string, template: string, imports: Array<string>}>} */ ([]),
-    interfaces:
-      /** @type {Array<{name: string, properties: Array<{name: string, type: string, description: string}>}>} */ ([]),
-    accessibility:
-      /** @type {Array<{feature: string, description: string}>} */ ([]),
   };
 
   try {
-    // Enhanced Brain API extraction with detailed parsing
-    const brainSections = html.split(/(?=Brn\w+)/gi).slice(1);
-    for (const section of brainSections) {
-      const component = parseBrainAPIComponent(section);
-      if (component) apiInfo.brainAPI.push(component);
+    // Extract only the visible documentation section, not embedded JSON
+    // Look for Brain API and Helm API sections in the visible HTML
+    const brainAPIMatch = html.match(
+      /<h[1-6][^>]*>Brain API<\/h[1-6]>([\s\S]*?)(?=<h[1-6][^>]*>(?:Helm API|On this page|$)|$)/i
+    );
+    const helmAPIMatch = html.match(
+      /<h[1-6][^>]*>Helm API<\/h[1-6]>([\s\S]*?)(?=<h[1-6][^>]*>(?:On this page|$)|$)/i
+    );
+
+    // Parse Brain API section
+    if (brainAPIMatch) {
+      const brainSection = brainAPIMatch[1];
+      const brainComponents = extractAPIComponents(brainSection);
+      apiInfo.brainAPI = brainComponents;
     }
 
-    // Enhanced Helm API extraction
-    const helmSections = html.split(/(?=Hlm\w+)/gi).slice(1);
-    for (const section of helmSections) {
-      const component = parseHelmAPIComponent(section);
-      if (component) apiInfo.helmAPI.push(component);
+    // Parse Helm API section
+    if (helmAPIMatch) {
+      const helmSection = helmAPIMatch[1];
+      const helmComponents = extractAPIComponents(helmSection);
+      apiInfo.helmAPI = helmComponents;
     }
 
-    // Enhanced code examples with context
-    apiInfo.examples = extractEnhancedCodeBlocks(html);
+    // Use extractCodeBlocks for focused code examples
+    // This reuses the proven extraction logic and avoids pollution
+    const codeBlocks = extractCodeBlocks(html);
 
-    // Extract usage patterns
-    apiInfo.usage = extractUsagePatterns(html);
-
-    // Extract TypeScript interfaces
-    apiInfo.interfaces = extractTypeScriptInterfaces(html);
-
-    // Extract accessibility information
-    apiInfo.accessibility = extractAccessibilityInfo(html);
+    // Convert code blocks to example format with simple titles
+    apiInfo.examples = codeBlocks.slice(0, 10).map((code, index) => ({
+      title: `Example ${index + 1}`,
+      code: code,
+      language: detectLanguage(code),
+    }));
   } catch (error) {
     console.error("Error extracting API info:", error);
   }
@@ -215,82 +233,124 @@ export function extractAPIInfo(html) {
 }
 
 /**
- * Parse Brain API component section
- * @param {string} section
+ * Extract API components from a section of HTML
+ * @param {string} html
  */
-function parseBrainAPIComponent(section) {
-  const text = htmlToText(section);
-  const lines = text.split("\n").filter((line) => line.trim());
+function extractAPIComponents(html) {
+  const components = [];
 
-  if (lines.length === 0) return null;
-
-  const name = lines[0].trim();
-  const selectorMatch = text.match(/Selector:\s*([^\n]+)/i);
-  const selector = selectorMatch ? selectorMatch[1].trim() : "";
-
-  const inputs = parsePropsTable(text, "Inputs");
-  const outputs = parsePropsTable(text, "Outputs");
-
-  return { name, selector, inputs, outputs };
-}
-
-/**
- * Parse Helm API component section
- * @param {string} section
- */
-function parseHelmAPIComponent(section) {
-  const text = htmlToText(section);
-  const lines = text.split("\n").filter((line) => line.trim());
-
-  if (lines.length === 0) return null;
-
-  const name = lines[0].trim();
-  const selectorMatch = text.match(/Selector:\s*([^\n]+)/i);
-  const selector = selectorMatch ? selectorMatch[1].trim() : "";
-
-  const inputs = parsePropsTable(text, "Inputs");
-  const outputs = parsePropsTable(text, "Outputs");
-
-  return { name, selector, inputs, outputs };
-}
-
-/**
- * Parse props table (Inputs/Outputs)
- * @param {string} text
- * @param {string} section
- */
-function parsePropsTable(text, section) {
-  const props = [];
-  const sectionRegex = new RegExp(
-    `${section}[\\s\\S]*?(?=(?:Inputs|Outputs|Examples|$))`,
-    "i"
-  );
-  const sectionMatch = text.match(sectionRegex);
-
-  if (!sectionMatch) return props;
-
-  const tableText = sectionMatch[0];
-  const propRegex = /(\w+)\s+([^\s]+)\s+([^\s]+)\s+(.+?)(?=\n\w+|\n$|$)/g;
+  // Look for component definitions with headers like "BrnAvatar" or "HlmAvatar"
+  const componentRegex =
+    /<h[1-6][^>]*>((Brn|Hlm)\w+)<\/h[1-6]>([\s\S]*?)(?=<h[1-6][^>]*>(?:Brn|Hlm)\w+<\/h[1-6]>|$)/gi;
 
   let match;
-  while ((match = propRegex.exec(tableText)) !== null) {
-    if (section === "Inputs") {
-      props.push({
-        prop: match[1].trim(),
-        type: match[2].trim(),
-        default: match[3].trim(),
-        description: match[4].trim(),
-      });
-    } else {
-      props.push({
-        prop: match[1].trim(),
-        type: match[2].trim(),
-        description: match[3].trim(),
-      });
+  while ((match = componentRegex.exec(html)) !== null) {
+    const name = match[1];
+    const content = match[3];
+
+    // Extract selector
+    const selectorMatch = content.match(/Selector:\s*([^\n<]+)/i);
+    const selector = selectorMatch ? selectorMatch[1].trim() : "";
+
+    // Extract inputs table
+    const inputs = extractPropsFromTable(content, "Inputs");
+
+    // Extract outputs table
+    const outputs = extractPropsFromTable(content, "Outputs");
+
+    components.push({
+      name,
+      selector,
+      inputs,
+      outputs,
+    });
+  }
+
+  return components;
+}
+
+/**
+ * Extract properties from an API table
+ * @param {string} html
+ * @param {string} tableType - "Inputs" or "Outputs"
+ */
+function extractPropsFromTable(html, tableType) {
+  const props = [];
+
+  // Look for the table section
+  const tableSectionRegex = new RegExp(
+    `<h[1-6][^>]*>${tableType}<\\/h[1-6]>([\\s\\S]*?)(?=<h[1-6]|$)`,
+    "i"
+  );
+  const tableSectionMatch = html.match(tableSectionRegex);
+
+  if (!tableSectionMatch) return props;
+
+  const tableSection = tableSectionMatch[1];
+
+  // Extract table rows
+  const rowRegex = /<tr[^>]*>([\s\S]*?)<\/tr>/gi;
+  let rowMatch;
+  let isHeaderRow = true;
+
+  while ((rowMatch = rowRegex.exec(tableSection)) !== null) {
+    const rowContent = rowMatch[1];
+
+    // Skip header row
+    if (isHeaderRow) {
+      isHeaderRow = false;
+      continue;
+    }
+
+    // Extract cells
+    const cells = [];
+    const cellRegex = /<t[dh][^>]*>([\s\S]*?)<\/t[dh]>/gi;
+    let cellMatch;
+
+    while ((cellMatch = cellRegex.exec(rowContent)) !== null) {
+      cells.push(htmlToText(cellMatch[1]).trim());
+    }
+
+    if (cells.length >= 3) {
+      if (tableType === "Inputs") {
+        props.push({
+          prop: cells[0],
+          type: cells[1],
+          default: cells[2],
+          description: cells[3] || "",
+        });
+      } else {
+        // Outputs
+        props.push({
+          prop: cells[0],
+          type: cells[1],
+          description: cells[2] || "",
+        });
+      }
     }
   }
 
   return props;
+}
+
+/**
+ * Simple language detection based on code content
+ * @param {string} code
+ */
+function detectLanguage(code) {
+  if (code.includes("import") && code.includes("Component")) {
+    return "typescript";
+  }
+  if (code.includes("import") && code.includes("from")) {
+    return "javascript";
+  }
+  if (code.includes("<") && code.includes(">") && code.includes("hlm")) {
+    return "html";
+  }
+  if (code.includes("npm") || code.includes("npx") || code.includes("ng ")) {
+    return "bash";
+  }
+  return "typescript"; // default
 }
 
 /**
@@ -318,113 +378,4 @@ function extractEnhancedCodeBlocks(html) {
   }
 
   return examples;
-}
-
-/**
- * Extract usage patterns
- * @param {string} html
- */
-function extractUsagePatterns(html) {
-  const patterns = [];
-  const usageRegex = /<(hlm-[\w-]+)[^>]*[\s\S]*?(?:\/?>|<\/\1>)/gi;
-
-  let match;
-  while ((match = usageRegex.exec(html)) !== null) {
-    const component = match[1];
-    const template = htmlToText(match[0]);
-
-    // Extract imports from nearby code blocks
-    const imports = extractImportsFromContext(html, match.index);
-
-    patterns.push({ component, template, imports });
-  }
-
-  return patterns;
-}
-
-/**
- * Extract TypeScript interfaces
- * @param {string} html
- */
-function extractTypeScriptInterfaces(html) {
-  const interfaces = [];
-  const interfaceRegex = /interface\s+(\w+)\s*\{([^}]+)\}/gi;
-
-  let match;
-  while ((match = interfaceRegex.exec(htmlToText(html))) !== null) {
-    const name = match[1];
-    const body = match[2];
-
-    const properties = [];
-    const propRegex = /(\w+)(\??):\s*([^;,\n]+)/g;
-    let propMatch;
-
-    while ((propMatch = propRegex.exec(body)) !== null) {
-      properties.push({
-        name: propMatch[1] + (propMatch[2] ? "?" : ""),
-        type: propMatch[3].trim(),
-        description: "",
-      });
-    }
-
-    interfaces.push({ name, properties });
-  }
-
-  return interfaces;
-}
-
-/**
- * Extract accessibility information
- * @param {string} html
- */
-function extractAccessibilityInfo(html) {
-  const a11yInfo = [];
-  const text = htmlToText(html);
-
-  // Look for accessibility-related keywords
-  const a11yKeywords = [
-    "accessibility",
-    "aria",
-    "keyboard",
-    "screen reader",
-    "focus",
-    "tab",
-  ];
-
-  for (const keyword of a11yKeywords) {
-    const regex = new RegExp(`[^.]*${keyword}[^.]*\\.`, "gi");
-    const matches = text.match(regex);
-
-    if (matches) {
-      for (const match of matches) {
-        a11yInfo.push({
-          feature: keyword,
-          description: match.trim(),
-        });
-      }
-    }
-  }
-
-  return a11yInfo;
-}
-
-/**
- * Extract imports from context around a usage example
- * @param {string} html
- * @param {number} position
- */
-function extractImportsFromContext(html, position) {
-  const imports = [];
-  const contextStart = Math.max(0, position - 1000);
-  const contextEnd = Math.min(html.length, position + 1000);
-  const context = html.substring(contextStart, contextEnd);
-
-  const importRegex = /import\s*\{([^}]+)\}\s*from\s*['"]([^'"]+)['"]/gi;
-
-  let match;
-  while ((match = importRegex.exec(htmlToText(context))) !== null) {
-    imports.push(`import { ${match[1].trim()} } from '${match[2].trim()}';`);
-  }
-
-  return imports;
 }

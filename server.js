@@ -10,6 +10,9 @@ import { registerMetaTools } from "./tools/meta.js";
 import { registerGenerationTools } from "./tools/generation.js";
 import { registerSearchTools } from "./tools/search.js";
 import { registerAnalysisTools } from "./tools/analysis.js";
+import { registerResourceHandlers } from "./tools/resources.js";
+import { registerPromptHandlers } from "./tools/prompts.js";
+import { registerCacheTools } from "./tools/cache-tools.js";
 
 const server = new McpServer({
   name: "spartan-ui-mcp",
@@ -26,6 +29,13 @@ registerMetaTools(server);
 registerGenerationTools(server);
 registerSearchTools(server);
 registerAnalysisTools(server);
+registerCacheTools(server);
+
+// Register resource handlers
+registerResourceHandlers(server);
+
+// Register prompt handlers
+registerPromptHandlers(server);
 
 const transport = new StdioServerTransport();
 

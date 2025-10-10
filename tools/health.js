@@ -5,7 +5,7 @@ import { SPARTAN_COMPONENTS_BASE, SPARTAN_DOCS_BASE } from "./utils.js";
 export function registerHealthTools(server) {
   // Availability check (not CLI)
   server.registerTool(
-    "spartan.health.check",
+    "spartan_health_check",
     {
       title: "Spartan pages availability check",
       description:
@@ -96,7 +96,7 @@ export function registerHealthTools(server) {
 
   // Official instructions per docs
   server.registerTool(
-    "spartan.health.instructions",
+    "spartan_health_instructions",
     {
       title: "Spartan CLI health check instructions",
       description:
@@ -124,7 +124,7 @@ export function registerHealthTools(server) {
 
   // Command builder for ng/nx with optional --dry-run
   server.registerTool(
-    "spartan.health.command",
+    "spartan_health_command",
     {
       title: "Build Spartan health check command",
       description:

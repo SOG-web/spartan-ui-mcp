@@ -1,0 +1,217 @@
+{
+  "version": "latest",
+  "createdAt": "2025-10-10T09:05:58.310Z",
+  "lastUpdated": "2025-10-10T09:08:43.038Z",
+  "components": {
+    "accordion": {
+      "cachedAt": "2025-10-10T09:08:15.223Z",
+      "size": 1144171
+    },
+    "alert": {
+      "cachedAt": "2025-10-10T09:08:15.754Z",
+      "size": 1065329
+    },
+    "alert-dialog": {
+      "cachedAt": "2025-10-10T09:08:16.277Z",
+      "size": 1075381
+    },
+    "aspect-ratio": {
+      "cachedAt": "2025-10-10T09:08:16.791Z",
+      "size": 1002677
+    },
+    "avatar": {
+      "cachedAt": "2025-10-10T09:08:17.270Z",
+      "size": 1018389
+    },
+    "badge": {
+      "cachedAt": "2025-10-10T09:08:17.803Z",
+      "size": 1040765
+    },
+    "breadcrumb": {
+      "cachedAt": "2025-10-10T09:08:18.377Z",
+      "size": 1173813
+    },
+    "button": {
+      "cachedAt": "2025-10-10T09:08:19.035Z",
+      "size": 1163017
+    },
+    "calendar": {
+      "cachedAt": "2025-10-10T09:08:19.570Z",
+      "size": 1813403
+    },
+    "card": {
+      "cachedAt": "2025-10-10T09:08:20.104Z",
+      "size": 1064085
+    },
+    "carousel": {
+      "cachedAt": "2025-10-10T09:08:20.619Z",
+      "size": 1259387
+    },
+    "checkbox": {
+      "cachedAt": "2025-10-10T09:08:21.154Z",
+      "size": 1089751
+    },
+    "collapsible": {
+      "cachedAt": "2025-10-10T09:08:21.702Z",
+      "size": 1033603
+    },
+    "combobox": {
+      "cachedAt": "2025-10-10T09:08:22.206Z",
+      "size": 1074699
+    },
+    "command": {
+      "cachedAt": "2025-10-10T09:08:22.734Z",
+      "size": 1267633
+    },
+    "context-menu": {
+      "cachedAt": "2025-10-10T09:08:23.260Z",
+      "size": 1190839
+    },
+    "data-table": {
+      "cachedAt": "2025-10-10T09:08:23.775Z",
+      "size": 1189929
+    },
+    "date-picker": {
+      "cachedAt": "2025-10-10T09:08:24.301Z",
+      "size": 1377091
+    },
+    "dialog": {
+      "cachedAt": "2025-10-10T09:08:24.844Z",
+      "size": 1329749
+    },
+    "dropdown-menu": {
+      "cachedAt": "2025-10-10T09:08:25.373Z",
+      "size": 1305613
+    },
+    "form-field": {
+      "cachedAt": "2025-10-10T09:08:25.892Z",
+      "size": 1157313
+    },
+    "hover-card": {
+      "cachedAt": "2025-10-10T09:08:26.404Z",
+      "size": 1047331
+    },
+    "icon": {
+      "cachedAt": "2025-10-10T09:08:27.125Z",
+      "size": 3286545
+    },
+    "input": {
+      "cachedAt": "2025-10-10T09:08:27.653Z",
+      "size": 1082291
+    },
+    "input-otp": {
+      "cachedAt": "2025-10-10T09:08:28.141Z",
+      "size": 1211159
+    },
+    "label": {
+      "cachedAt": "2025-10-10T09:08:28.617Z",
+      "size": 1006959
+    },
+    "menubar": {
+      "cachedAt": "2025-10-10T09:08:29.100Z",
+      "size": 1204879
+    },
+    "pagination": {
+      "cachedAt": "2025-10-10T09:08:29.609Z",
+      "size": 1316583
+    },
+    "popover": {
+      "cachedAt": "2025-10-10T09:08:30.082Z",
+      "size": 1046793
+    },
+    "progress": {
+      "cachedAt": "2025-10-10T09:08:30.563Z",
+      "size": 1040305
+    },
+    "radio-group": {
+      "cachedAt": "2025-10-10T09:08:31.055Z",
+      "size": 1163513
+    },
+    "scroll-area": {
+      "cachedAt": "2025-10-10T09:08:31.527Z",
+      "size": 1041403
+    },
+    "select": {
+      "cachedAt": "2025-10-10T09:08:32.014Z",
+      "size": 1259921
+    },
+    "separator": {
+      "cachedAt": "2025-10-10T09:08:32.489Z",
+      "size": 1010519
+    },
+    "sheet": {
+      "cachedAt": "2025-10-10T09:08:33.015Z",
+      "size": 1208525
+    },
+    "skeleton": {
+      "cachedAt": "2025-10-10T09:08:33.494Z",
+      "size": 1015707
+    },
+    "slider": {
+      "cachedAt": "2025-10-10T09:08:33.972Z",
+      "size": 990437
+    },
+    "sonner": {
+      "cachedAt": "2025-10-10T09:08:34.470Z",
+      "size": 1059105
+    },
+    "spinner": {
+      "cachedAt": "2025-10-10T09:08:35.668Z",
+      "size": 1026175
+    },
+    "switch": {
+      "cachedAt": "2025-10-10T09:08:36.189Z",
+      "size": 1068887
+    },
+    "table": {
+      "cachedAt": "2025-10-10T09:08:36.778Z",
+      "size": 1100891
+    },
+    "tabs": {
+      "cachedAt": "2025-10-10T09:08:37.289Z",
+      "size": 1335645
+    },
+    "textarea": {
+      "cachedAt": "2025-10-10T09:08:38.047Z",
+      "size": 1008463
+    },
+    "toggle": {
+      "cachedAt": "2025-10-10T09:08:38.581Z",
+      "size": 1147847
+    },
+    "toggle-group": {
+      "cachedAt": "2025-10-10T09:08:39.070Z",
+      "size": 1156179
+    },
+    "tooltip": {
+      "cachedAt": "2025-10-10T09:08:39.691Z",
+      "size": 1064809
+    }
+  },
+  "docs": {
+    "installation": {
+      "cachedAt": "2025-10-10T09:08:40.064Z",
+      "size": 134973
+    },
+    "theming": {
+      "cachedAt": "2025-10-10T09:08:40.421Z",
+      "size": 121296
+    },
+    "dark-mode": {
+      "cachedAt": "2025-10-10T09:08:40.963Z",
+      "size": 70675
+    },
+    "typography": {
+      "cachedAt": "2025-10-10T09:08:41.522Z",
+      "size": 173773
+    },
+    "health-checks": {
+      "cachedAt": "2025-10-10T09:08:42.011Z",
+      "size": 79602
+    },
+    "update-guide": {
+      "cachedAt": "2025-10-10T09:08:43.037Z",
+      "size": 79628
+    }
+  }
+}

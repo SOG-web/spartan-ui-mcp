@@ -7,7 +7,7 @@ import {
 
 export function registerMetaTools(server) {
   server.registerTool(
-    "spartan.meta",
+    "spartan_meta",
     {
       title: "Spartan metadata",
       description:

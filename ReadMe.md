@@ -122,13 +122,13 @@ npm start
 
 ```json
 // List all available components
-{ "tool": "spartan.components.list" }
+{ "tool": "spartan_components_list" }
 
 // Search components by feature
-{ "tool": "spartan.components.search", "feature": "multi-selection" }
+{ "tool": "spartan_components_search", "feature": "multi-selection" }
 
 // Get component with enhanced API extraction
-{ "tool": "spartan.components.get", "name": "calendar", "extract": "api" }
+{ "tool": "spartan_components_get", "name": "calendar", "extract": "api" }
 ```
 
 #### **Code Generation**
@@ -136,7 +136,7 @@ npm start
 ```json
 // Generate Angular component boilerplate
 {
-  "tool": "spartan.generate.component",
+  "tool": "spartan_generate_component",
   "componentName": "calendar",
   "variant": "helm",
   "outputFormat": "standalone"
@@ -144,14 +144,14 @@ npm start
 
 // Create working example
 {
-  "tool": "spartan.generate.example",
+  "tool": "spartan_generate_example",
   "componentName": "dialog",
   "scenario": "advanced"
 }
 
 // Validate component props
 {
-  "tool": "spartan.validate.props",
+  "tool": "spartan_validate_props",
   "componentName": "calendar",
   "props": { "date": "2024-01-01", "min": "invalid" }
 }
@@ -161,58 +161,58 @@ npm start
 
 ```json
 // Full-text search
-{ "tool": "spartan.search", "query": "date picker accessibility" }
+{ "tool": "spartan_search", "query": "date picker accessibility" }
 
 // Find related components
-{ "tool": "spartan.components.related", "componentName": "calendar" }
+{ "tool": "spartan_components_related", "componentName": "calendar" }
 
 // Analyze dependencies
-{ "tool": "spartan.components.dependencies", "componentName": "dialog" }
+{ "tool": "spartan_components_dependencies", "componentName": "dialog" }
 
 // Compare API variants
-{ "tool": "spartan.components.variants", "componentName": "calendar" }
+{ "tool": "spartan_components_variants", "componentName": "calendar" }
 ```
 
 #### **Accessibility Analysis**
 
 ```json
 // Comprehensive accessibility check
-{ "tool": "spartan.accessibility.check", "componentName": "dialog" }
+{ "tool": "spartan_accessibility_check", "componentName": "dialog" }
 
 // Specific accessibility aspect
-{ "tool": "spartan.accessibility.check", "componentName": "button", "checkType": "aria" }
+{ "tool": "spartan_accessibility_check", "componentName": "button", "checkType": "aria" }
 ```
 
 ## 🛠 Available Tools (18 Total)
 
 ### **Core Tools (7)**
 
-- `spartan.components.list` - List all components with URLs
-- `spartan.components.get` - Get component docs with enhanced API extraction
-- `spartan.docs.get` - Fetch documentation topics
-- `spartan.health.check` - Check page availability
-- `spartan.health.instructions` - CLI health check guidance
-- `spartan.health.command` - Generate health check commands
-- `spartan.meta` - Metadata for autocompletion
+- `spartan_components_list` - List all components with URLs
+- `spartan_components_get` - Get component docs with enhanced API extraction
+- `spartan_docs_get` - Fetch documentation topics
+- `spartan_health_check` - Check page availability
+- `spartan_health_instructions` - CLI health check guidance
+- `spartan_health_command` - Generate health check commands
+- `spartan_meta` - Metadata for autocompletion
 
 ### **Code Generation Tools (3)**
 
-- `spartan.generate.component` - Generate Angular component boilerplate
-- `spartan.generate.example` - Create working examples from specs
-- `spartan.validate.props` - Validate component property usage
+- `spartan_generate_component` - Generate Angular component boilerplate
+- `spartan_generate_example` - Create working examples from specs
+- `spartan_validate_props` - Validate component property usage
 
 ### **Search & Discovery Tools (3)**
 
-- `spartan.search` - Full-text search across components and docs
-- `spartan.components.search` - Search components by feature/use-case
-- `spartan.examples.get` - Get specific examples by component
+- `spartan_search` - Full-text search across components and docs
+- `spartan_components_search` - Search components by feature/use-case
+- `spartan_examples_get` - Get specific examples by component
 
 ### **Component Analysis Tools (4)**
 
-- `spartan.components.dependencies` - Analyze component dependencies
-- `spartan.components.related` - Find related/similar components
-- `spartan.components.variants` - Compare Brain vs Helm API variants
-- `spartan.accessibility.check` - Comprehensive accessibility analysis
+- `spartan_components_dependencies` - Analyze component dependencies
+- `spartan_components_related` - Find related/similar components
+- `spartan_components_variants` - Compare Brain vs Helm API variants
+- `spartan_accessibility_check` - Comprehensive accessibility analysis
 
 ## 📊 Output Formats
 

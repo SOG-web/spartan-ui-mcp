@@ -1,4 +1,3 @@
-//@ts-check
 import { z } from "zod";
 import {
   KNOWN_COMPONENTS,
@@ -9,16 +8,17 @@ import {
   extractLinks,
   extractAPIInfo,
 } from "./utils.js";
+import { cacheManager } from "./cache.js";
 
 export function registerComponentTools(server) {
   // List components
   server.registerTool(
-    "spartan.components.list",
+    "spartan_components_list",
     {
       title: "List Spartan UI components",
       description:
         "Returns a list of known Spartan Angular UI components with their documentation URLs. " +
-        "Use this to discover available components, then call spartan.components.get with specific component names to get detailed API documentation.",
+        "Use this to discover available components, then call spartan_components_get with specific component names to get detailed API documentation.",
       inputSchema: {},
     },
     async () => {
@@ -30,7 +30,7 @@ export function registerComponentTools(server) {
         JSON.stringify({ components: items }, null, 2) +
         "\n\nPROCESSING INSTRUCTIONS:\n" +
         "- This list contains all available Spartan UI components\n" +
-        "- Use spartan.components.get with any component name to get detailed API documentation\n" +
+        "- Use spartan_components_get with any component name to get detailed API documentation\n" +
         "- Each component has Brain API (Brn*) and Helm API (Hlm*) variants\n" +
         "- Always present component options and APIs when helping users";
       return {
@@ -46,7 +46,7 @@ export function registerComponentTools(server) {
 
   // Get component page
   server.registerTool(
-    "spartan.components.get",
+    "spartan_components_get",
     {
       title: "Get component documentation",
       description:
@@ -70,24 +70,83 @@ export function registerComponentTools(server) {
             "Optional extraction: 'code' for code blocks, 'headings' for section headers, 'links' for URLs, 'api' for structured API information."
           ),
         noCache: z.boolean().default(false).describe("Bypass cache when true."),
+        spartanVersion: z
+          .string()
+          .optional()
+          .describe(
+            "Spartan UI version to use for caching (e.g., '1.2.3'). If not provided, defaults to 'latest'."
+          ),
       },
     },
-    async (args) => {
+    async (
+      /** @type {{ name: any; format: string; extract: string; noCache: any; spartanVersion?: string; }} */ args
+    ) => {
       const name = String(args.name || "")
         .trim()
         .toLowerCase();
       if (!name) throw new Error("Missing component name");
+
+      // Initialize cache with version (defaults to "latest")
+      await cacheManager.initialize(args.spartanVersion);
+
       const url = `${SPARTAN_COMPONENTS_BASE}/${encodeURIComponent(name)}`;
       const format = args.format === "text" ? "text" : "html";
       const extract = args.extract || "none";
       const noCache = Boolean(args.noCache);
-      const content = await fetchContent(url, format, noCache);
+
+      let content;
+      let cacheInfo = "";
+
+      // Try cache first if not bypassed
+      if (!noCache) {
+        const cached = await cacheManager.getComponent(name, "full");
+        if (cached.cached && !cached.stale) {
+          // Use cached data
+          if (format === "text") {
+            content = cached.data.html; // Will be converted below if needed
+          } else {
+            content = cached.data.html;
+          }
+          cacheInfo = `\n[📦 CACHED DATA - Version: ${cached.version}, Cached at: ${cached.cachedAt}]`;
+        } else if (cached.cached && cached.stale) {
+          // Cache exists but stale - fetch fresh and update
+          content = await fetchContent(url, format, true);
+          const html = format === "text" ? content : content;
+          const api = extractAPIInfo(/** @type {string} */ (html));
+          const examples = extractCodeBlocks(/** @type {string} */ (html));
+          await cacheManager.setComponent(name, {
+            html,
+            api,
+            examples,
+            full: { html, api, examples, url },
+          });
+          cacheInfo = `\n[🔄 CACHE REFRESHED - Version: ${cacheManager.currentVersion}]`;
+        } else {
+          // No cache - fetch and cache
+          content = await fetchContent(url, format, true);
+          const html = format === "text" ? content : content;
+          const api = extractAPIInfo(/** @type {string} */ (html));
+          const examples = extractCodeBlocks(/** @type {string} */ (html));
+          await cacheManager.setComponent(name, {
+            html,
+            api,
+            examples,
+            full: { html, api, examples, url },
+          });
+          cacheInfo = `\n[✨ NEWLY CACHED - Version: ${cacheManager.currentVersion}]`;
+        }
+      } else {
+        // Bypass cache completely
+        content = await fetchContent(url, format, true);
+        cacheInfo = "\n[🌐 LIVE FETCH - Cache bypassed]";
+      }
+
       if (extract === "none" || format === "text") {
         const responseText =
-          `${content}\n\nSource: ${url}\n\n` +
+          `${content}${cacheInfo}\n\nSource: ${url}\n\n` +
           "PROCESSING INSTRUCTIONS:\n" +
           "- This response contains detailed API documentation\n" +
-          "- Look for 'Brain API' and 'Helm API' sections, e.t.c lookout for all headers and other sections\n" +
+          "- Look for 'Brain API' and 'Helm API' sections, etc. look out for all headers and other sections\n" +
           "- Extract component selectors, inputs, outputs, and examples\n" +
           "- Present API information in structured format\n" +
           "- Include code examples and usage patterns";
@@ -95,6 +154,7 @@ export function registerComponentTools(server) {
           content: [{ type: "text", text: responseText }],
         };
       }
+
       const html = /** @type {string} */ (
         await fetchContent(url, "html", noCache)
       );
@@ -109,6 +169,8 @@ export function registerComponentTools(server) {
         extract,
         count: Array.isArray(extracted) ? extracted.length : 0,
         data: extracted,
+        cacheInfo: cacheInfo.trim(),
+        version: cacheManager.currentVersion,
         processingInstructions:
           "Always parse and present the API information, code examples, and component specifications from this data.",
       };

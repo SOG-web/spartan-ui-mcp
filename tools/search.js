@@ -13,7 +13,7 @@ import {
 export function registerSearchTools(server) {
   // Full-text search across all components and docs
   server.registerTool(
-    "spartan.search",
+    "spartan_search",
     {
       title: "Full-text search across Spartan UI",
       description:
@@ -74,7 +74,7 @@ export function registerSearchTools(server) {
 
   // Search components by feature/use-case
   server.registerTool(
-    "spartan.components.search",
+    "spartan_components_search",
     {
       title: "Search components by feature or use-case",
       description:
@@ -130,7 +130,7 @@ export function registerSearchTools(server) {
 
   // Get specific examples by component name
   server.registerTool(
-    "spartan.examples.get",
+    "spartan_examples_get",
     {
       title: "Get specific examples by component name",
       description:

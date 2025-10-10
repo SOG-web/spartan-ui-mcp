@@ -10,7 +10,7 @@ import {
 export function registerGenerationTools(server) {
   // Generate component boilerplate
   server.registerTool(
-    "spartan.generate.component",
+    "spartan_generate_component",
     {
       title: "Generate component boilerplate",
       description:
@@ -86,7 +86,7 @@ export function registerGenerationTools(server) {
 
   // Generate working example
   server.registerTool(
-    "spartan.generate.example",
+    "spartan_generate_example",
     {
       title: "Generate working example from API specs",
       description:
@@ -146,7 +146,7 @@ export function registerGenerationTools(server) {
 
   // Validate component props
   server.registerTool(
-    "spartan.validate.props",
+    "spartan_validate_props",
     {
       title: "Validate component prop usage",
       description:
