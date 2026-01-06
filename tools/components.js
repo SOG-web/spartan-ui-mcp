@@ -41,7 +41,7 @@ export function registerComponentTools(server) {
           },
         ],
       };
-    }
+    },
   );
 
   // Get component page
@@ -65,21 +65,21 @@ export function registerComponentTools(server) {
           .describe("Return format: raw HTML or plain text."),
         extract: z
           .enum(["none", "code", "headings", "links", "api"])
-          .default("none")
+          .default("code")
           .describe(
-            "Optional extraction: 'code' for code blocks, 'headings' for section headers, 'links' for URLs, 'api' for structured API information."
+            "Optional extraction: 'code' for code blocks, 'headings' for section headers, 'links' for URLs, 'api' for structured API information.",
           ),
         noCache: z.boolean().default(false).describe("Bypass cache when true."),
         spartanVersion: z
           .string()
           .optional()
           .describe(
-            "Spartan UI version to use for caching (e.g., '1.2.3'). If not provided, defaults to 'latest'."
+            "Spartan UI version to use for caching (e.g., '1.2.3'). If not provided, defaults to 'latest'.",
           ),
       },
     },
     async (
-      /** @type {{ name: any; format: string; extract: string; noCache: any; spartanVersion?: string; }} */ args
+      /** @type {{ name: any; format: string; extract: string; noCache: any; spartanVersion?: string; }} */ args,
     ) => {
       const name = String(args.name || "")
         .trim()
@@ -91,7 +91,7 @@ export function registerComponentTools(server) {
 
       const url = `${SPARTAN_COMPONENTS_BASE}/${encodeURIComponent(name)}`;
       const format = args.format === "text" ? "text" : "html";
-      const extract = args.extract || "none";
+      const extract = args.extract || "code";
       const noCache = Boolean(args.noCache);
 
       let content;
@@ -177,6 +177,6 @@ export function registerComponentTools(server) {
       return {
         content: [{ type: "text", text: JSON.stringify(payload, null, 2) }],
       };
-    }
+    },
   );
 }
