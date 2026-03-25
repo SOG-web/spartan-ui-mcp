@@ -1,21 +1,22 @@
 {
   "name": "spartan-ui-mcp",
-  "version": "1.1.0",
-  "description": "MCP server exposing Spartan Angular UI documentation and component tools.",
-  "main": "server.js",
+  "version": "2.0.0",
+  "description": "MCP server exposing Spartan Angular UI documentation, component tools, and blocks.",
+  "main": "dist/server.js",
   "type": "module",
   "bin": {
-    "spartan-ui-mcp": "./server.js"
+    "spartan-ui-mcp": "./dist/server.js"
   },
   "files": [
-    "server.js",
-    "tools/"
+    "dist/"
   ],
   "scripts": {
-    "start": "node server.js",
-    "dev": "node --watch server.js",
-    "test": "echo \"No tests configured\" && exit 0",
-    "prepublish": "echo 'Ready to publish spartan-ui-mcp'"
+    "build": "tsc",
+    "start": "node dist/server.js",
+    "dev": "tsc --watch & node --watch dist/server.js",
+    "typecheck": "tsc --noEmit",
+    "test": "npm run build && node --test test/*.test.mjs",
+    "prepublishOnly": "npm run build"
   },
   "keywords": [
     "mcp",
@@ -24,6 +25,7 @@
     "angular",
     "ui",
     "spartan-ui",
+    "spartan-blocks",
     "components",
     "documentation"
   ],
@@ -45,6 +47,7 @@
     "zod": "^3.23.8"
   },
   "devDependencies": {
-    "@types/node": "^24.7.1"
+    "@types/node": "^24.7.1",
+    "typescript": "^5.7.0"
   }
 }

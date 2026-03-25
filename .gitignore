@@ -1,5 +1,7 @@
 node_modules
+dist
+cache
+*.tsbuildinfo
 .cursorrules
 .cursor
-.cursorignore
 .cursorignore

@@ -118,101 +118,85 @@ npm start
 
 ### Example Tool Calls
 
-#### **Component Discovery**
+#### **Components, Blocks, and Docs**
 
 ```json
-// List all available components
+// List all known components
 { "tool": "spartan_components_list" }
 
-// Search components by feature
-{ "tool": "spartan_components_search", "feature": "multi-selection" }
+// Fetch the latest accordion API data
+{ "tool": "spartan_components_get", "name": "accordion", "extract": "api" }
 
-// Get component with enhanced API extraction
-{ "tool": "spartan_components_get", "name": "calendar", "extract": "api" }
+// Fetch a docs topic from the live Spartan site
+{ "tool": "spartan_docs_get", "topic": "cli", "extract": "headings" }
+
+// List available blocks
+{ "tool": "spartan_blocks_list" }
+
+// Fetch a block and its examples
+{ "tool": "spartan_blocks_get", "name": "sidebar", "format": "text" }
 ```
 
-#### **Code Generation**
+#### **Analysis, Health, and Cache**
 
 ```json
-// Generate Angular component boilerplate
-{
-  "tool": "spartan_generate_component",
-  "componentName": "calendar",
-  "variant": "helm",
-  "outputFormat": "standalone"
-}
-
-// Create working example
-{
-  "tool": "spartan_generate_example",
-  "componentName": "dialog",
-  "scenario": "advanced"
-}
-
-// Validate component props
-{
-  "tool": "spartan_validate_props",
-  "componentName": "calendar",
-  "props": { "date": "2024-01-01", "min": "invalid" }
-}
-```
-
-#### **Search & Analysis**
-
-```json
-// Full-text search
-{ "tool": "spartan_search", "query": "date picker accessibility" }
-
-// Find related components
-{ "tool": "spartan_components_related", "componentName": "calendar" }
-
 // Analyze dependencies
 { "tool": "spartan_components_dependencies", "componentName": "dialog" }
 
-// Compare API variants
-{ "tool": "spartan_components_variants", "componentName": "calendar" }
+// Run accessibility analysis
+{ "tool": "spartan_accessibility_check", "componentName": "accordion", "checkType": "all" }
+
+// Check docs-site availability
+{ "tool": "spartan_health_check", "topics": ["installation", "cli"] }
+
+// Inspect cache state
+{ "tool": "spartan_cache_status" }
 ```
 
-#### **Accessibility Analysis**
+Prompt names:
 
-```json
-// Comprehensive accessibility check
-{ "tool": "spartan_accessibility_check", "componentName": "dialog" }
+- `spartan-get-started`
+- `spartan-compare-apis`
+- `spartan-implement-feature`
+- `spartan-troubleshoot`
+- `spartan-list-components`
 
-// Specific accessibility aspect
-{ "tool": "spartan_accessibility_check", "componentName": "button", "checkType": "aria" }
-```
+## 🛠 Available MCP Surface
 
-## 🛠 Available Tools (18 Total)
+### **Tools (17)**
 
-### **Core Tools (7)**
+- `spartan_components_list`
+- `spartan_components_get`
+- `spartan_docs_get`
+- `spartan_health_check`
+- `spartan_health_instructions`
+- `spartan_health_command`
+- `spartan_meta`
+- `spartan_components_dependencies`
+- `spartan_accessibility_check`
+- `spartan_cache_status`
+- `spartan_cache_clear`
+- `spartan_cache_rebuild`
+- `spartan_cache_switch_version`
+- `spartan_cache_list_versions`
+- `spartan_blocks_list`
+- `spartan_blocks_get`
+- `spartan_blocks_dependencies`
 
-- `spartan_components_list` - List all components with URLs
-- `spartan_components_get` - Get component docs with enhanced API extraction
-- `spartan_docs_get` - Fetch documentation topics
-- `spartan_health_check` - Check page availability
-- `spartan_health_instructions` - CLI health check guidance
-- `spartan_health_command` - Generate health check commands
-- `spartan_meta` - Metadata for autocompletion
+### **Resources (4)**
 
-### **Code Generation Tools (3)**
+- `spartan://components/list`
+- `spartan://component/{name}/api`
+- `spartan://component/{name}/examples`
+- `spartan://component/{name}/full`
 
-- `spartan_generate_component` - Generate Angular component boilerplate
-- `spartan_generate_example` - Create working examples from specs
-- `spartan_validate_props` - Validate component property usage
+### **Prompts (5)**
 
-### **Search & Discovery Tools (3)**
-
-- `spartan_search` - Full-text search across components and docs
-- `spartan_components_search` - Search components by feature/use-case
-- `spartan_examples_get` - Get specific examples by component
-
-### **Component Analysis Tools (4)**
-
-- `spartan_components_dependencies` - Analyze component dependencies
-- `spartan_components_related` - Find related/similar components
-- `spartan_components_variants` - Compare Brain vs Helm API variants
-- `spartan_accessibility_check` - Comprehensive accessibility analysis
+- `spartan-get-started`
+- `spartan-compare-apis`
+- `spartan-implement-feature`
+- `spartan-troubleshoot`
+- `spartan-list-components`
 
 ## 📊 Output Formats
 
@@ -227,18 +211,22 @@ npm start
 
 ```
 spartan-ui-mcp/
-├── server.js              # Main MCP server entry point (32 lines)
+├── src/
+│   ├── server.ts           # Main MCP server entry point
+│   └── tools/
+│       ├── utils.ts        # Fetching, parsing, and extraction helpers
+│       ├── components.ts   # Component tools
+│       ├── docs.ts         # Documentation topic tools
+│       ├── blocks.ts       # Block tools
+│       ├── resources.ts    # MCP resources
+│       ├── prompts.ts      # MCP prompts
+│       ├── analysis.ts     # Dependency and accessibility tools
+│       ├── health.ts       # Site status + CLI health-check helpers
+│       ├── cache.ts        # Versioned on-disk cache manager
+│       └── cache-tools.ts  # Cache inspection and rebuild tools
+├── test/                   # Regression tests
 ├── package.json            # Dependencies and npm scripts
-├── plan.md                 # Comprehensive project documentation
-└── tools/                  # Modular tool implementations
-    ├── utils.js            # Enhanced API extraction & utilities (431 lines)
-    ├── components.js       # Component tools with processing hints (121 lines)
-    ├── docs.js             # Documentation fetching tools (78 lines)
-    ├── health.js           # Health check and CLI tools (154 lines)
-    ├── meta.js             # Metadata and autocompletion (64 lines)
-    ├── generation.js       # Code generation tools (NEW)
-    ├── search.js           # Search and discovery tools (NEW)
-    └── analysis.js         # Component analysis tools (NEW)
+└── tsconfig.json           # TypeScript build configuration
 ```
 
 ## ⚡ Performance & Caching
