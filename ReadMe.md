@@ -113,8 +113,31 @@ npm install -g spartan-ui-mcp
 git clone https://github.com/SOG-web/spartan-ui-mcp.git
 cd spartan-ui-mcp
 npm install
-npm start
+npm run build
 ```
+
+### Local MCP Configuration
+
+Add the following to your MCP client config (e.g., Cursor settings):
+
+```json
+{
+  "mcpServers": {
+    "spartan-ui": {
+      "command": [
+        "node",
+        "/path/to/your/spartan-ui-mcp/dist/server.js"
+      ],
+      "type": "local",
+      "enabled": true
+    }
+  }
+}
+```
+
+1. Run `npm run build` to compile TypeScript to `dist/`
+2. Update the `command` paths to match your Node.js binary and project location
+3. Restart your MCP client
 
 ### Example Tool Calls
 
