@@ -91,7 +91,7 @@ interface VersionInfo {
  */
 export class CacheManager {
   cacheDir: string;
-  currentVersion: string | null;
+  public currentVersion: string | null;
   cacheMetadata: CacheMetadata | null;
 
   constructor() {
@@ -100,8 +100,16 @@ export class CacheManager {
     this.cacheMetadata = null;
   }
 
+  static validateVersion(version: string): void {
+    if (!version || version === "." || version === ".." || version.includes("/") || version.includes("\\")) {
+      throw new Error(`Invalid version: ${version}`);
+    }
+  }
+
   async initialize(spartanVersion?: string): Promise<string> {
-    this.currentVersion = spartanVersion || "latest";
+    const version = spartanVersion || "latest";
+    CacheManager.validateVersion(version);
+    this.currentVersion = version;
     await this.ensureCacheDir();
     await this.loadMetadata();
     return this.currentVersion;
@@ -484,6 +492,7 @@ export class CacheManager {
   }
 
   async switchVersion(version: string): Promise<{ success: boolean; version: string; message: string }> {
+    CacheManager.validateVersion(version);
     this.currentVersion = version;
     await this.ensureCacheDir();
     await this.loadMetadata();

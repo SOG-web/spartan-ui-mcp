@@ -80,7 +80,8 @@ export function registerBlockTools(server: McpServer): void {
       let cacheInfo = "";
 
       if (!noCache) {
-        const cached = await cacheManager.getBlock(name);
+        const cacheKey = `${name}_${format}`;
+        const cached = await cacheManager.getBlock(cacheKey);
         if (cached.cached && !cached.stale) {
           content = (cached.data as { html: string }).html;
           cacheInfo = `\n[CACHED DATA - Version: ${cached.version}, Cached at: ${cached.cachedAt}]`;
@@ -88,7 +89,7 @@ export function registerBlockTools(server: McpServer): void {
           content = await fetchContent(url, format, true);
           const html = content;
           const code = extractCodeBlocks(html);
-          await cacheManager.setBlock(name, {
+          await cacheManager.setBlock(cacheKey, {
             html,
             code,
             full: { html, code, url },
@@ -99,9 +100,6 @@ export function registerBlockTools(server: McpServer): void {
         content = await fetchContent(url, format, true);
         cacheInfo = "\n[LIVE FETCH - Cache bypassed]";
       }
-
-      const html = format === "text" ? content : content;
-      const code = extractCodeBlocks(html);
 
       const responseText =
         `${content}${cacheInfo}\n\nSource: ${url}\n\n` +
